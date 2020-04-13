@@ -26,6 +26,8 @@ It uses a git client to get access to assets/layouts of the site and compiles pa
 
 There is a binary available that can be deployed to AWS Lambda or any compatible platforms like [Netlify Functions](https://www.netlify.com/products/functions/).
 
+### Download in CI
+
 Use this command in your build to get the latest release:
 
 ```
@@ -37,8 +39,16 @@ curl -L -s https://github.com/mraerino/hugo-preview-server/releases/latest/downl
 ```
 
 See [this `Netlify.toml`](demo/netlify.toml) for an example
-
 In the future there will be tooling that will make this even easier.
+
+### Configuration
+
+The functions needs the following environment variables:
+
+```bash
+HUGO_PREVIEW_GITHUB_REPO=owner/repo # path to the repo where your hugo site is located
+HUGO_PREVIEW_GITHUB_TOKEN=<token>   # a personal or oauth token that allows read access to the repo
+```
 
 ## License
 
