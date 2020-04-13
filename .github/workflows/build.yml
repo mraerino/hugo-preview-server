@@ -24,6 +24,10 @@ jobs:
             ${{ runner.os }}-go-
       - name: Build function binary
         run: make build
+      - run: echo "::set-env name=RELEASE_NAME::Release ${{ github.ref }}"
+        if: "startsWith(github.event.ref, 'refs/tags/')"
+      - run: echo "::set-env name=RELEASE_NAME::${{ github.ref }} (${{ github.sha }})"
+        if: "!startsWith(github.event.ref , 'refs/tags/')"
       - name: Create release
         id: create_release
         uses: actions/create-release@v1
@@ -31,7 +35,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
+          release_name: ${{ env.RELEASE_NAME }}
           prerelease: ${{ contains(github.ref, '.pre') }}
           draft: ${{ !startsWith(github.event.ref, 'refs/tags/') }}
       - name: Upload Release Asset
