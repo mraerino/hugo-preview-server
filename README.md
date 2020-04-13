@@ -29,11 +29,11 @@ There is a binary available that can be deployed to AWS Lambda or any compatible
 Use this command in your build to get the latest release:
 
 ```
-curl -L https://github.com/mraerino/hugo-preview-server/releases/latest/download/preview-lambda -o <destination>
+curl -L -s https://github.com/mraerino/hugo-preview-server/releases/latest/download/preview-lambda -o <destination>
 
 # Example for Netlify Functions
 mkdir -p functions
-curl -L https://github.com/mraerino/hugo-preview-server/releases/latest/download/preview-lambda -o functions/preview
+curl -L -s https://github.com/mraerino/hugo-preview-server/releases/latest/download/preview-lambda -o functions/preview
 ```
 
 See [this `Netlify.toml`](demo/netlify.toml) for an example
