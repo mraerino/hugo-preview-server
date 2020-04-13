@@ -1,0 +1,44 @@
+<section id="{{ .section.section_id }}" class="portfolio-block block outer">
+  <div class="inner">
+    <div class="block-header">
+      <h2 class="block-title line-top">{{ .section.title }}</h2>
+      {{ if .section.subtitle }}
+      <p class="block-subtitle">
+        {{ .section.subtitle | safeHTML }}
+      </p>
+      {{ end }}
+    </div><!-- .block-header -->
+    <div class="block-content">
+      <div class="portfolio-feed layout-{{ .section.layout_style }}">
+        {{ $display_projects := ((.Site.GetPage "section" "/projects").Pages).ByDate.Reverse }}
+        {{ $recent_projects := $display_projects | first .section.num_projects_displayed }}
+        {{ $post_len := len $recent_projects }}
+        {{ range $post_idx, $post := $recent_projects }}
+        <article class="post project">
+          {{ if eq $post_idx (sub $post_len 1) }}
+          <a href="{{ $.section.view_all_url }}" class="post-link">
+            {{ if $post.Params.thumb_img_path }}
+            <div class="post-thumbnail">
+              <img class="thumbnail" src="{{ $post.Params.thumb_img_path | relURL }}" alt="{{ $post.Params.title }}" />
+            </div>
+            {{ end }}
+            <span class="view-all">{{ $.section.view_all_text | default "View All" }}</span>
+          </a>
+          {{ else }}
+          <a href="{{ $post.URL }}" class="post-link">
+            {{ if $post.Params.thumb_img_path }}
+            <div class="post-thumbnail">
+              <img class="thumbnail" src="{{ $post.Params.thumb_img_path | relURL }}" alt="{{ $post.Params.title }}" />
+            </div>
+            {{ end }}
+            <header class="post-header">
+              <h3 class="post-title">{{ $post.Params.title }}</h3>
+            </header>
+          </a><!-- .post-link -->
+          {{ end }}
+        </article><!-- .post -->
+        {{ end }}
+      </div><!-- .portfolio-feed -->
+    </div><!-- .block-content -->
+  </div><!-- .inner -->
+</section><!-- .block -->

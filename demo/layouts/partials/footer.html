@@ -1,0 +1,17 @@
+<footer id="colophon" class="site-footer outer">
+  <div class="inner">
+    <div class="site-footer-inside">
+      <p class="site-info">
+        {{ .Site.Params.footer.content | safeHTML }}
+        &nbsp;
+        {{ range $link := .Site.Params.footer.links }}
+        <a href="{{ $link.url }}" {{ if $link.new_window }}target="_blank" rel="noopener"
+          {{ end }}>{{ $link.text }}</a>.
+        {{ end }}
+      </p><!-- .site-info -->
+      {{ if .Site.Params.footer.has_social }}
+        {{ partial "social.html" . }}
+      {{ end }}
+    </div><!-- .site-footer-inside -->
+  </div><!-- .inner -->
+</footer><!-- .site-footer -->

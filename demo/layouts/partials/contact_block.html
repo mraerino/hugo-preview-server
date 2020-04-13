@@ -1,0 +1,17 @@
+<section id="{{ .section.section_id }}" class="block contact-block outer">
+  <div class="inner">
+    <div class="block-inside">
+      <div class="block-header">
+        <h2 class="block-title line-top">{{ .section.title }}</h2>
+        {{ if .section.subtitle }}
+        <p class="block-subtitle">
+          {{ .section.subtitle | safeHTML }}
+        </p>
+        {{ end }}
+      </div><!-- .block-header -->
+      <div class="block-content">
+        {{ partial "contact_form.html" . }}
+      </div><!-- .block-content -->
+    </div><!-- .block-inside -->
+  </div><!-- .inner -->
+</section><!-- .block -->

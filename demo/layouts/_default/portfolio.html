@@ -1,0 +1,46 @@
+{{ define "content" }}
+
+<div class="outer">
+  <div class="inner">
+
+    <header class="page-header inner-small">
+      <h1 class="page-title line-top">{{ .Params.title }}</h1>
+      {{ if .Params.subtitle }}
+      <p class="page-subtitle">{{ .Params.subtitle }}</p>
+      {{ end }}
+    </header><!--.page-header -->
+    <div class="portfolio-feed layout-{{ .Params.layout_style }}">
+      {{ $display_projects := ((.Site.GetPage "section" "/projects").Pages).ByDate.Reverse }}
+      {{ range $post := $display_projects }}
+      <article class="post project">
+        <a href="{{ $post.URL }}" class="post-link">
+          {{ if $post.Params.thumb_img_path }}
+          <div class="post-thumbnail">
+            <img class="thumbnail" src="{{ $post.Params.thumb_img_path | relURL }}" alt="{{ $post.Params.title }}" />
+          </div>
+          {{ end }}
+          <header class="post-header">
+            <h2 class="post-title">{{ $post.Params.title }}</h2>
+          </header>
+        </a><!-- .post-link -->
+      </article><!-- .project -->
+      {{ end }}
+    </div><!-- .portfolio-feed -->
+
+    <!-- Pagination TBD -->
+    <!--
+    <nav class="pagination">
+      <div class="nav-links">
+        <a class="newer-posts button" href="#"><span class="icon-angle-left" aria-hidden="true"></span><span
+            class="screen-reader-text">Prev</span></a>
+        <span class="page-number">Showing page X of Y</span>
+        <a class="older-posts button" href="#"><span class="screen-reader-text">Next</span><span class="icon-angle-right"
+            aria-hidden="true"></span></a>
+      </div>
+    </nav>
+    -->
+    
+  </div><!-- .inner -->
+</div><!-- .outer-->
+
+{{ end }}

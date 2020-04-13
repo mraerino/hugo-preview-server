@@ -1,0 +1,45 @@
+<section id="{{ .section.section_id }}" class="posts-block block outer">
+  <div class="inner">
+    <div class="block-inside">
+      <div class="block-header">
+        <h2 class="block-title line-top">{{ .section.title }}</h2>
+        {{ if .section.subtitle }}
+        <p class="block-subtitle">
+          {{ .section.subtitle | safeHTML }}
+        </p>
+        {{ end }}
+      </div><!-- .block-header -->
+      <div class="block-content">
+        <div class="post-feed">
+          {{ $display_posts := ((.Site.GetPage "section" "/posts").Pages).ByDate.Reverse }}
+          {{ $recent_posts := $display_posts | first .section.num_posts_displayed }}
+          {{ range $post := $recent_posts }}
+          <article class="post">
+            {{ if $post.Params.thumb_img_path }}
+            <a class="post-thumbnail" href="{{ $post.URL }}"><img class="thumbnail" src="{{ $post.Params.thumb_img_path | relURL }}" alt="{{ $post.Params.title }}" /></a>
+            {{ end }}
+            <header class="post-header">
+              <h3 class="post-title"><a href="{{ $post.URL }}" rel="bookmark">{{ $post.Params.title }}</a></h3>
+              <div class="post-meta">
+                <time class="published" datetime="{{ $post.Date | dateFormat "2006-01-02 15:04" }}">{{ $post.Date | dateFormat "January 02, 2006" }}</time>
+              </div>
+            </header>
+            {{ if $post.Params.excerpt }}
+            <div class="post-excerpt">
+              <p>{{ $post.Params.excerpt }}</p>
+            </div>
+            {{ end }}
+          </article><!-- .post -->
+          {{ end }}
+        </div><!-- .portfolio-feed -->
+        {{ if .section.actions }}
+        <p class="block-cta">
+          {{ range $action := .section.actions }}
+          <a href="{{ $action.url | relURL }}" class="button">{{ $action.label }}</a>
+          {{ end }}
+        </p><!-- .block-cta -->
+        {{ end }}
+      </div><!-- .block-content -->
+    </div><!-- .block-inside -->
+  </div><!-- .inner -->
+</section><!-- .block -->

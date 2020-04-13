@@ -1,0 +1,26 @@
+<section id="{{ .section.section_id }}" class="block text-block outer">
+  <div class="inner">
+    <div class="block-inside">
+      <div class="block-header">
+        <h2 class="block-title">{{ .section.title }}</h2>
+        {{ if .section.subtitle }}
+        <p class="block-subtitle">
+          {{ .section.subtitle | safeHTML }}
+        </p>
+        {{ end }}
+      </div><!-- .block-header -->
+      <div class="block-content">
+        <div class="block-copy">
+          {{ partial "markdownify-block" .section.content }}
+          {{ if .section.actions }}
+          <p class="block-cta">
+            {{ range $action := .section.actions }}
+            <a href="{{ $action.url | relURL }}" class="button">{{ $action.label }}</a>
+            {{ end }}
+          </p>
+          {{ end }}
+        </div>
+      </div><!-- .block-content -->
+    </div><!-- .block-inside -->
+  </div><!-- .inner -->
+</section><!-- .block -->

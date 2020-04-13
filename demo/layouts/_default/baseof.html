@@ -1,0 +1,31 @@
+<!doctype html>
+<html>
+    <head>
+
+        <title>{{ if .Title }}{{ .Title }} - {{ end }}{{ .Site.Title }}</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="google" content="notranslate" />
+        <link href="https://fonts.googleapis.com/css?family=Muli:400,400i,700,700i" rel="stylesheet">
+        {{ $css := resources.Get "sass/main.scss" | resources.ExecuteAsTemplate "assets/css/main.css" . | resources.ToCSS (dict "indentWidth" 4 "outputStyle" "nested" "precision" 10) }}
+        {{ if eq .Hugo.Environment "preview" }}
+        <style>{{ $css.Content | safeCSS }}</style>
+        {{ else }}
+        <link rel="stylesheet" href="{{ $css.Permalink }}">
+        {{ end }}
+
+    </head>
+    <body>
+
+        <div id="page" class="site palette-{{ .Site.Params.color_scheme }} accent-{{ .Site.Params.accent_color }}">
+          {{ partial "header.html" . }}
+          <main id="content" class="site-content">
+            {{ block "content" . }}{{ end }}
+          </main><!-- .site-content -->
+          {{ partial "footer.html" . }}
+        </div><!-- .site -->
+        <!-- Scripts -->
+        <script src="{{ "assets/js/plugins.js" | relURL }}"></script>
+        <script src="{{ "assets/js/main.js" | relURL }}"></script>
+    </body>
+</html>

@@ -1,0 +1,50 @@
+{{ define "content" }}
+
+<div class="outer">
+  <div class="inner">
+
+    <div class="post-feed">
+      {{ $display_posts := ((.Site.GetPage "section" "/posts").Pages).ByDate.Reverse }}
+      {{ range $post := $display_posts }}
+      <article class="post">
+        <header class="post-header inner-small">
+          <h2 class="post-title line-top"><a href="{{ $post.URL }}" rel="bookmark">{{ $post.Params.title }}</a></h2>
+          <div class="post-meta">
+            <time class="published"
+              datetime="{{ $post.Date | dateFormat "2006-01-02 15:04" }}">{{ $post.Date | dateFormat "January 02, 2006" }}</time>
+          </div>
+          {{ if $post.Params.subtitle }}
+          <div class="post-subtitle">
+            {{ $post.Params.subtitle | safeHTML }}
+          </div><!-- .post-subtitle -->
+          {{ end }}
+        </header><!-- .post-header -->
+        {{ if $post.Params.thumb_img_path }}
+        <a class="post-thumbnail" href="{{ $post.URL }}">
+          <img class="thumbnail" src="{{ $post.Params.thumb_img_path | relURL }}" alt="{{ $post.Params.title }}" />
+        </a>
+        {{ end }}
+        {{ if $post.Params.excerpt }}
+        <div class="post-excerpt inner-small">
+          <p>{{ $post.Params.excerpt }}</p>
+        </div>
+        {{ end }}
+      </article><!-- .post -->
+      {{ end }}
+    </div><!-- .post-feed -->
+
+    <!-- Pagination TBD -->
+    <!--
+    <nav class="pagination">
+      <div class="nav-links">
+        <a class="newer-posts button" href="#"><span class="icon-angle-left" aria-hidden="true"></span><span class="screen-reader-text">Prev</span></a>
+        <span class="page-number">Showing page X of Y</span>
+        <a class="older-posts button" href="#"><span class="screen-reader-text">Next</span><span class="icon-angle-right" aria-hidden="true"></span></a>
+      </div>
+    </nav>
+    -->
+
+  </div><!-- .inner -->
+</div><!-- .outer-->
+
+{{ end }}

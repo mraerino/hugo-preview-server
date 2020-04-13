@@ -1,0 +1,31 @@
+<section id="{{ .section.section_id }}" class="block testimonials-block outer">
+  <div class="inner">
+    <div class="block-inside">
+      <div class="block-header">
+        <h2 class="block-title line-top">{{ .section.title }}</h2>
+        {{ if .section.subtitle }}
+        <p class="block-subtitle">
+          {{ .section.subtitle | safeHTML }}
+        </p>
+        {{ end }}
+      </div><!-- .block-header -->
+      {{ if .section.testimonialslist }}
+      <div class="block-content">
+        <div class="testimonials-list">
+          {{ range $testimonial := .section.testimonialslist }}
+          <blockquote class="testimonial">
+            <p class="testimonial-text">{{ $testimonial.content | safeHTML }}</p>
+            <footer class="testimonial-footer">
+              {{ if $testimonial.avatar }}
+              <img class="testimonial-avatar" src="{{ $testimonial.avatar | relURL }}" alt="Author avatar">
+              {{ end }}
+              <cite class="testimonial-author">{{ $testimonial.author }}</cite>
+            </footer>
+          </blockquote><!-- .testimonial -->
+          {{ end }}
+        </div><!-- .testimonials-list -->
+      </div><!-- .block-content -->
+      {{ end }}
+    </div><!-- .block-inside -->
+  </div><!-- .inner -->
+</section><!-- .block -->

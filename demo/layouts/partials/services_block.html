@@ -1,0 +1,29 @@
+<section id="{{ .section.section_id }}" class="block services-block outer">
+  <div class="inner">
+    <div class="block-inside">
+      <div class="block-header">
+        <h2 class="block-title line-top">{{ .section.title }}</h2>
+        {{ if .section.subtitle }}
+        <p class="block-subtitle">
+          {{ .section.subtitle | safeHTML }}
+        </p>
+        {{ end }}
+      </div><!-- .block-header -->
+      {{ if .section.serviceslist }}
+      <div class="block-content">
+        <div class="services-list">
+          {{ range $service_idx, $service := .section.serviceslist }}
+          <div class="service">
+            <span class="service-counter" aria-hidden="true">{{ add $service_idx 1 }}.</span>
+            <h3 class="service-title">{{ $service.title }}</h3>
+            <div class="service-text">
+              {{ partial "markdownify-block" $service.content }}
+            </div>
+          </div><!-- .service -->
+          {{ end }}
+        </div><!-- .services-list -->
+      </div><!-- .block-content -->
+      {{ end }}
+    </div><!-- .block-inside -->
+  </div><!-- .inner -->
+</section><!-- .block -->

@@ -1,0 +1,12 @@
+<section id="{{ .section.section_id }}" class="block hero-block outer">
+  <div class="inner-small">
+    <div class="block-header">
+      <h2 class="block-title">{{ .section.title }}</h2>
+    </div><!-- .block-header -->
+    <div class="block-content">
+      <div class="block-copy">
+        {{ partial "markdownify-block" .section.content }}
+      </div>
+    </div><!-- .block-content -->
+  </div><!-- .inner -->
+</section><!-- .block -->
