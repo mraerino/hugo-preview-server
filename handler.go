@@ -50,9 +50,7 @@ func setupGithubFS() (afero.Fs, error) {
 		return nil, errors.New("missing github repo: HUGO_PREVIEW_GITHUB_REPO")
 	}
 
-	branch := os.Getenv("HUGO_PREVIEW_GITHUB_BRANCH")
-
-	return githubfs.New(token, repo, branch)
+	return githubfs.New(token, repo)
 }
 
 func newPreviewAPI() (*previewAPI, error) {

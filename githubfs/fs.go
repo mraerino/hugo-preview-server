@@ -22,14 +22,13 @@ type githubFS struct {
 
 	repoOwner string
 	repoName  string
-	branch    string
 
 	rootTree  string
 	treeCache sync.Map // map[string]map[string]githubFile
 }
 
 // New creates an FS to get files from github on-demand
-func New(accessToken string, repo string, branch string) (afero.Fs, error) {
+func New(accessToken string, repo string) (afero.Fs, error) {
 	repoParts := strings.Split(repo, "/")
 	if len(repoParts) != 2 {
 		return nil, errors.New("invalid repo path, expected owner/repo style")
@@ -46,7 +45,6 @@ func New(accessToken string, repo string, branch string) (afero.Fs, error) {
 		client:    client,
 		repoOwner: repoParts[0],
 		repoName:  repoParts[1],
-		branch:    branch,
 	}, nil
 }
 
