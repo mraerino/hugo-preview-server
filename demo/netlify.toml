@@ -1,0 +1,15 @@
+[build]
+publish = "public"
+command = '''
+hugo -b /demo/ -d public/demo && \
+curl -L https://github.com/mraerino/hugo-preview-server/releases/latest/download/preview-lambda -o functions/preview
+'''
+functions = "functions"
+
+  [build.environment]
+  HUGO_VERSION = "0.69.0"
+
+[[redirects]]
+from = "/"
+to = "https://github.com/mraerino/hugo-preview-server"
+force = true

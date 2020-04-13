@@ -1,12 +1,2 @@
 [build]
-publish = "public"
-command = "hugo -s demo -b /demo/ -d ../public/demo && make build"
-functions = "dist"
-
-  [build.environment]
-  HUGO_VERSION = "0.69.0"
-
-[[redirects]]
-from = "/"
-to = "https://github.com/mraerino/hugo-preview-server"
-force = true
+base = "demo"
