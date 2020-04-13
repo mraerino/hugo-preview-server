@@ -50,6 +50,16 @@ HUGO_PREVIEW_GITHUB_REPO=owner/repo # path to the repo where your hugo site is l
 HUGO_PREVIEW_GITHUB_TOKEN=<token>   # a personal or oauth token that allows read access to the repo
 ```
 
+## Run locally
+
+Requirements:
+- Docker
+- [SAM](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-install.html)
+
+While developing, use the make commands to get a binary:
+- `make build` - if you are on linux
+- `make in-docker` - any other system
+
 ## License
 
 See [LICENSE file](LICENSE.md)
