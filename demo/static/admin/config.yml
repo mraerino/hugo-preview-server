@@ -1,6 +1,7 @@
 backend:
   name: github
   repo: mraerino/hugo-preview-server
+  branch: main
   open_authoring: true
 
 publish_mode: editorial_workflow
