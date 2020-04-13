@@ -1,0 +1,52 @@
+name: Hugo Preview Server
+
+on: push
+
+jobs:
+  build-lambda:
+    name: Build & release lambda function binary
+    runs-on: ubuntu-latest
+    env:
+      GO_VERSION: 1.14
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+      - name: Setup go ${{ env.GO_VERSION }}
+        uses: actions/setup-go@v2-beta
+        with:
+          go-version: "^${{ env.GO_VERSION }}"
+      - name: Cache go modules
+        uses: actions/cache@v1
+        with:
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+      - name: Build function binary
+        run: make build
+      - name: Set name for tagged release
+        run: echo "::set-env name=RELEASE_NAME::Release ${GITHUB_REF#refs/tags/}"
+        if: "startsWith(github.event.ref, 'refs/tags/')"
+      - name: Set name for non-tag release
+        run: echo "::set-env name=RELEASE_NAME::${GITHUB_REF#refs/heads/} (${GITHUB_SHA:0:8})"
+        if: "!startsWith(github.event.ref , 'refs/tags/')"
+      - name: Create release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: ${{ env.RELEASE_NAME }}
+          prerelease: ${{ contains(github.ref, '.pre') }}
+          draft: ${{ !startsWith(github.event.ref, 'refs/tags/') }}
+      - name: Upload Release Asset
+        id: upload-release-asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: dist/preview
+          asset_name: preview-lambda
+          asset_content_type: application/octet-stream
