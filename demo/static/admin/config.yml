@@ -1,15 +1,15 @@
 backend:
   name: git-gateway
   branch: main
-media_folder: static/images
-public_folder: /images
+media_folder: demo/static/images
+public_folder: /demo/images
 collections:
   - name: config
     label: Global Site Config
     files:
       - name: config
         label: Global Site Config
-        file: config.yaml
+        file: demo/config.yaml
         fields:
           - widget: string
             name: title
@@ -163,7 +163,7 @@ collections:
     files:
       - name: social
         label: Social Links
-        file: data/social.json
+        file: demo/data/social.json
         fields:
           - widget: list
             name: links
@@ -193,7 +193,7 @@ collections:
     files:
       - name: author
         label: Author
-        file: data/author.json
+        file: demo/data/author.json
         fields:
           - widget: string
             name: name
@@ -212,7 +212,7 @@ collections:
     files:
       - name: home
         label: Home
-        file: content/_index.md
+        file: demo/content/_index.md
         fields:
           - widget: string
             name: title
@@ -590,7 +590,7 @@ collections:
     files:
       - name: blog
         label: Blog
-        file: content/blog/_index.md
+        file: demo/content/blog/_index.md
         fields:
           - widget: string
             name: title
@@ -644,7 +644,7 @@ collections:
     files:
       - name: portfolio
         label: Portfolio
-        file: content/portfolio/_index.md
+        file: demo/content/portfolio/_index.md
         fields:
           - widget: string
             name: title
@@ -712,7 +712,7 @@ collections:
     files:
       - name: contact
         label: Contact
-        file: content/contact.md
+        file: demo/content/contact.md
         fields:
           - widget: string
             name: title
@@ -778,7 +778,7 @@ collections:
             hint: Page content
   - name: page
     label: Pages
-    folder: content/
+    folder: demo/content/
     create: true
     extension: md
     slug: "{{slug}}"
@@ -850,7 +850,7 @@ collections:
       value: page
   - name: post
     label: Posts
-    folder: content/posts
+    folder: demo/content/posts
     create: true
     extension: md
     slug: "{{slug}}"
@@ -936,7 +936,7 @@ collections:
       value: post
   - name: project
     label: Projects
-    folder: content/projects
+    folder: demo/content/projects
     create: true
     extension: md
     slug: "{{slug}}"
