@@ -1,0 +1,19 @@
+title: Stackbit Exto Theme
+baseURL: /
+params:
+  color_scheme: light
+  accent_color: pink
+  header:
+    title: Exto
+    has_nav: true
+  footer:
+    content: '&copy; Stackbit-Exto. All rights reserved.'
+    links:
+      - text: Made with Stackbit
+        url: 'https://www.stackbit.com'
+        new_window: true
+    has_social: true
+disableKinds:
+  - RSS
+  - taxonomy
+  - taxonomyTerm
