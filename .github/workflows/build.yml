@@ -24,9 +24,11 @@ jobs:
             ${{ runner.os }}-go-
       - name: Build function binary
         run: make build
-      - run: echo "::set-env name=RELEASE_NAME::Release ${{ github.ref }}"
+      - name: Set name for tagged release
+        run: echo "::set-env name=RELEASE_NAME::Release ${{ github.ref }}"
         if: "startsWith(github.event.ref, 'refs/tags/')"
-      - run: echo "::set-env name=RELEASE_NAME::${{ github.ref }} (${{ github.sha }})"
+      - name: Set name for non-tag release
+        run: echo "::set-env name=RELEASE_NAME::${{ github.ref }} (${{ github.sha }})"
         if: "!startsWith(github.event.ref , 'refs/tags/')"
       - name: Create release
         id: create_release
