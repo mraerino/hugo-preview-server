@@ -48,6 +48,7 @@ The functions needs the following environment variables:
 ```bash
 HUGO_PREVIEW_GITHUB_REPO=owner/repo # path to the repo where your hugo site is located
 HUGO_PREVIEW_GITHUB_TOKEN=<token>   # a personal or oauth token that allows read access to the repo
+HUGO_PREVIEW_BASE=<path>            # optional, use when your hugo site is not based in the repo root
 ```
 
 ## Run locally

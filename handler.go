@@ -26,6 +26,8 @@ type previewAPI struct {
 	hugo  *hugolib.HugoSites
 	memFS afero.Fs
 
+	basePath string
+
 	initialBuildDone nutil.AtomicBool
 }
 
@@ -63,10 +65,16 @@ func newPreviewAPI() (*previewAPI, error) {
 	cachedFs := afero.NewCacheOnReadFs(ghFS, mm, 0)
 	fs := afero.NewCopyOnWriteFs(cachedFs, mm)
 
+	basePath := os.Getenv("HUGO_PREVIEW_BASE")
+	if !strings.HasPrefix(basePath, "/") {
+		basePath = "/" + basePath
+	}
+	fmt.Printf("basePath: %s\n", basePath)
+
 	cfg, _, err := hugolib.LoadConfig(hugolib.ConfigSourceDescriptor{
 		Fs:         fs,
-		Filename:   "/config.yaml",
-		WorkingDir: "/",
+		Filename:   filepath.Join(basePath, "config.yaml"),
+		WorkingDir: basePath + "/",
 	})
 	if err != nil {
 		return nil, err
@@ -94,8 +102,17 @@ func newPreviewAPI() (*previewAPI, error) {
 		hugo:  site,
 		memFS: mm,
 
+		basePath: basePath,
+
 		initialBuildDone: nutil.NewAtomicBool(false),
 	}, nil
+}
+
+func (a *previewAPI) absPath(path string) string {
+	fmt.Printf("absPath before: %s\n", path)
+	newPath := filepath.Join(a.basePath, path)
+	fmt.Printf("absPath after: %s\n", newPath)
+	return newPath
 }
 
 func (a *previewAPI) insertData(path string, data map[string]interface{}) (err error) {
@@ -113,10 +130,7 @@ func (a *previewAPI) insertData(path string, data map[string]interface{}) (err e
 	}
 	delete(data, "body")
 
-	if !strings.HasPrefix(path, "/") {
-		path = "/" + path
-	}
-	targetFile, err := a.memFS.OpenFile(path, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, os.ModePerm)
+	targetFile, err := a.memFS.OpenFile(a.absPath(path), os.O_CREATE|os.O_WRONLY|os.O_TRUNC, os.ModePerm)
 	if err != nil {
 		return err
 	}
@@ -151,11 +165,8 @@ func (a *previewAPI) build(path string) error {
 	partialBuild := a.initialBuildDone.Get()
 	var events []fsnotify.Event
 	if partialBuild {
-		if !strings.HasPrefix(path, "/") {
-			path = "/" + path
-		}
 		events = append(events, fsnotify.Event{
-			Name: path,
+			Name: a.absPath(path),
 			Op:   fsnotify.Write,
 		})
 	}
@@ -172,7 +183,7 @@ func (a *previewAPI) build(path string) error {
 }
 
 func (a *previewAPI) getPublicPath(path string) string {
-	page := a.hugo.GetContentPage("/" + path)
+	page := a.hugo.GetContentPage(a.absPath(path))
 	if page == nil {
 		return ""
 	}
@@ -226,7 +237,7 @@ func (a *previewAPI) handler(request events.APIGatewayProxyRequest) (*events.API
 
 	content, err := afero.ReadFile(a.memFS, filepath.Join("public", publicPath))
 	if err != nil {
-		afero.Walk(a.memFS, "/", func(path string, file os.FileInfo, err error) error {
+		afero.Walk(a.memFS, "public", func(path string, file os.FileInfo, err error) error {
 			if err != nil {
 				return err
 			}
