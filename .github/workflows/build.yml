@@ -28,7 +28,7 @@ jobs:
         run: echo "::set-env name=RELEASE_NAME::Release ${GITHUB_REF#refs/tags/}"
         if: "startsWith(github.event.ref, 'refs/tags/')"
       - name: Set name for non-tag release
-        run: echo "::set-env name=RELEASE_NAME::${GITHUB_REF#refs/heads/} (${{ github.sha }})"
+        run: echo "::set-env name=RELEASE_NAME::${GITHUB_REF#refs/heads/} (${GITHUB_SHA:0:8})"
         if: "!startsWith(github.event.ref , 'refs/tags/')"
       - name: Create release
         id: create_release
