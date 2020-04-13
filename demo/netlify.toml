@@ -1,7 +1,0 @@
-[build]
-publish = "public"
-command = "hugo && cd .. && make build"
-functions = "../dist"
-
-  [build.environment]
-  HUGO_VERSION = "0.69.0"

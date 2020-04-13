@@ -1,2 +1,7 @@
 [build]
-base = "demo"
+publish = "demo/public"
+command = "hugo -s demo && make build"
+functions = "dist"
+
+  [build.environment]
+  HUGO_VERSION = "0.69.0"
