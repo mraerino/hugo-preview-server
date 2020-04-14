@@ -189,6 +189,9 @@ func (a *previewAPI) getPublicPath(path string) string {
 	if strings.HasSuffix(permalink, "/") {
 		permalink += "index.html"
 	}
+	permalink = strings.TrimPrefix(permalink, "/")
+	baseURL := strings.Trim(a.hugo.Cfg.GetString("baseURL"), "")
+	permalink = strings.TrimPrefix(permalink, baseURL)
 	return permalink
 }
 
