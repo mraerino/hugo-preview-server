@@ -26,8 +26,6 @@ type previewAPI struct {
 	hugo  *hugolib.HugoSites
 	memFS afero.Fs
 
-	basePath string
-
 	initialBuildDone nutil.AtomicBool
 }
 
@@ -102,17 +100,8 @@ func newPreviewAPI() (*previewAPI, error) {
 		hugo:  site,
 		memFS: mm,
 
-		basePath: basePath,
-
 		initialBuildDone: nutil.NewAtomicBool(false),
 	}, nil
-}
-
-func (a *previewAPI) absPath(path string) string {
-	fmt.Printf("absPath before: %s\n", path)
-	newPath := filepath.Join(a.basePath, path)
-	fmt.Printf("absPath after: %s\n", newPath)
-	return newPath
 }
 
 func (a *previewAPI) insertData(path string, data map[string]interface{}) (err error) {
@@ -130,7 +119,10 @@ func (a *previewAPI) insertData(path string, data map[string]interface{}) (err e
 	}
 	delete(data, "body")
 
-	targetFile, err := a.memFS.OpenFile(a.absPath(path), os.O_CREATE|os.O_WRONLY|os.O_TRUNC, os.ModePerm)
+	if !strings.HasPrefix(path, "/") {
+		path = "/" + path
+	}
+	targetFile, err := a.memFS.OpenFile(path, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, os.ModePerm)
 	if err != nil {
 		return err
 	}
@@ -165,8 +157,11 @@ func (a *previewAPI) build(path string) error {
 	partialBuild := a.initialBuildDone.Get()
 	var events []fsnotify.Event
 	if partialBuild {
+		if !strings.HasPrefix(path, "/") {
+			path = "/" + path
+		}
 		events = append(events, fsnotify.Event{
-			Name: a.absPath(path),
+			Name: path,
 			Op:   fsnotify.Write,
 		})
 	}
@@ -183,7 +178,10 @@ func (a *previewAPI) build(path string) error {
 }
 
 func (a *previewAPI) getPublicPath(path string) string {
-	page := a.hugo.GetContentPage(a.absPath(path))
+	if !strings.HasPrefix(path, "/") {
+		path = "/" + path
+	}
+	page := a.hugo.GetContentPage(path)
 	if page == nil {
 		return ""
 	}
