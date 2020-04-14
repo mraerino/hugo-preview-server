@@ -1,8 +1,14 @@
 backend:
-  name: git-gateway
+  name: github
+  repo: mraerino/hugo-preview-server
   branch: main
+  open_authoring: true
+
+publish_mode: editorial_workflow
+
 media_folder: demo/static/images
 public_folder: /demo/images
+
 collections:
   - name: config
     label: Global Site Config
