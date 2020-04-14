@@ -8,6 +8,12 @@ A piece of glue code that runs Hugo for serving previews for CMS systems.
 
 It uses a git client to get access to assets/layouts of the site and compiles pages based on content passed in via HTTP.
 
+### DEMO
+
+There is a demo setup at: https://hugo-preview-server.netlify.com/demo/admin/
+
+Log in via GitHub and select any entry from the "Posts" collection to see it in action.
+
 ## Features
 
 - Uses GitHub as a virtual filesystem to get layouts
@@ -38,7 +44,7 @@ mkdir -p functions
 curl -L -s https://github.com/mraerino/hugo-preview-server/releases/latest/download/preview-lambda -o functions/preview
 ```
 
-See [this `Netlify.toml`](demo/netlify.toml) for an example
+See [this `Netlify.toml`](demo/netlify.toml) for an example.
 In the future there will be tooling that will make this even easier.
 
 ### Configuration
@@ -54,10 +60,12 @@ HUGO_PREVIEW_BASE=<path>            # optional, use when your hugo site is not b
 ## Run locally
 
 Requirements:
+
 - Docker
 - [SAM](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-install.html)
 
 While developing, use the make commands to get a binary:
+
 - `make build` - if you are on linux
 - `make in-docker` - any other system
 
