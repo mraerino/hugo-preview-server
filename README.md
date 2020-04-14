@@ -65,10 +65,43 @@ Requirements:
 - Docker
 - [SAM](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-install.html)
 
-While developing, use the make commands to get a binary:
+While developing, use the one of the make commands to get a binary:
 
 - `make build` - if you are on linux
 - `make in-docker` - any other system
+
+Put your config vars into `env.json`, like this:
+
+```
+{
+  "PreviewFunction": {
+    "HUGO_PREVIEW_GITHUB_TOKEN": "<token>",
+    "HUGO_PREVIEW_GITHUB_REPO": "owner/repo",
+    "HUGO_PREVIEW_BASE": ""
+  }
+}
+```
+
+Run this to start the local API gateway:
+
+```bash
+sam local start-api --env-vars env.json
+```
+
+This is how the API request should look like:
+
+```js
+POST http://127.0.0.1:3000/render
+
+{
+    "path": "content/my-page.md",
+    "data": {
+        "body": "markdown body",
+        "title": "title frontmatter field",
+        "other": "frontmatter"
+    }
+}
+```
 
 ## License
 
