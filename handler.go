@@ -190,7 +190,7 @@ func (a *previewAPI) getPublicPath(path string) string {
 		permalink += "index.html"
 	}
 	permalink = strings.TrimPrefix(permalink, "/")
-	baseURL := strings.Trim(a.hugo.Cfg.GetString("baseURL"), "")
+	baseURL := strings.Trim(a.hugo.Cfg.GetString("baseURL"), "/")
 	permalink = strings.TrimPrefix(permalink, baseURL)
 	return permalink
 }
