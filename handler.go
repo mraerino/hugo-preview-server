@@ -50,9 +50,7 @@ func setupGithubFS() (afero.Fs, error) {
 		return nil, errors.New("missing github repo: HUGO_PREVIEW_GITHUB_REPO")
 	}
 
-	branch := os.Getenv("HUGO_PREVIEW_GITHUB_BRANCH")
-
-	return githubfs.New(token, repo, branch)
+	return githubfs.New(token, repo)
 }
 
 func newPreviewAPI() (*previewAPI, error) {
@@ -65,10 +63,16 @@ func newPreviewAPI() (*previewAPI, error) {
 	cachedFs := afero.NewCacheOnReadFs(ghFS, mm, 0)
 	fs := afero.NewCopyOnWriteFs(cachedFs, mm)
 
+	basePath := os.Getenv("HUGO_PREVIEW_BASE")
+	if !strings.HasPrefix(basePath, "/") {
+		basePath = "/" + basePath
+	}
+	fmt.Printf("basePath: %s\n", basePath)
+
 	cfg, _, err := hugolib.LoadConfig(hugolib.ConfigSourceDescriptor{
 		Fs:         fs,
-		Filename:   "/config.yaml",
-		WorkingDir: "/",
+		Filename:   filepath.Join(basePath, "config.yaml"),
+		WorkingDir: basePath + "/",
 	})
 	if err != nil {
 		return nil, err
@@ -174,7 +178,10 @@ func (a *previewAPI) build(path string) error {
 }
 
 func (a *previewAPI) getPublicPath(path string) string {
-	page := a.hugo.GetContentPage("/" + path)
+	if !strings.HasPrefix(path, "/") {
+		path = "/" + path
+	}
+	page := a.hugo.GetContentPage(path)
 	if page == nil {
 		return ""
 	}
@@ -228,7 +235,7 @@ func (a *previewAPI) handler(request events.APIGatewayProxyRequest) (*events.API
 
 	content, err := afero.ReadFile(a.memFS, filepath.Join("public", publicPath))
 	if err != nil {
-		afero.Walk(a.memFS, "/", func(path string, file os.FileInfo, err error) error {
+		afero.Walk(a.memFS, "public", func(path string, file os.FileInfo, err error) error {
 			if err != nil {
 				return err
 			}
