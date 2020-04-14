@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 	"strings"
 	"sync"
+	"sync/atomic"
 	"syscall"
 	"time"
 
@@ -23,8 +24,10 @@ type githubFS struct {
 	repoOwner string
 	repoName  string
 
-	rootTree  string
-	treeCache sync.Map // map[string]map[string]githubFile
+	rootTree   atomic.Value
+	rootTreeMu sync.Mutex
+	lastCheck  *int64
+	treeCache  sync.Map // map[string]map[string]githubFile
 }
 
 // New creates an FS to get files from github on-demand
@@ -40,11 +43,15 @@ func New(accessToken string, repo string) (afero.Fs, error) {
 	)
 	tc := oauth2.NewClient(ctx, ts)
 
+	lastCheck := new(int64)
+	atomic.StoreInt64(lastCheck, time.Now().UnixNano())
+
 	client := github.NewClient(tc)
 	return &githubFS{
 		client:    client,
 		repoOwner: repoParts[0],
 		repoName:  repoParts[1],
+		lastCheck: lastCheck,
 	}, nil
 }
 
@@ -95,13 +102,18 @@ func (fs *githubFS) Open(name string) (afero.File, error) {
 	path := strings.TrimPrefix(name, "/")
 	parts := strings.Split(path, "/")
 
-	if fs.rootTree == "" {
+	rootTree := fs.rootTree.Load().(string)
+	if rootTree == "" {
 		if err := fs.loadRepoRootTree(); err != nil {
 			return nil, errors.Wrap(err, "Failed to load root tree")
 		}
+	} else {
+		if err := fs.updateRepoRootTree(); err != nil {
+			return nil, errors.Wrap(err, "Failed to update root tree")
+		}
 	}
 
-	var treeCursor string = fs.rootTree
+	var treeCursor string = rootTree
 	var file *githubFile
 	for i, part := range parts {
 		if treeCursor == "" {
