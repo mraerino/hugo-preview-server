@@ -42,6 +42,7 @@ curl -L -s https://github.com/mraerino/hugo-preview-server/releases/latest/downl
 # Example for Netlify Functions
 mkdir -p functions
 curl -L -s https://github.com/mraerino/hugo-preview-server/releases/latest/download/preview-lambda -o functions/preview
+chmod +x functions/preview
 ```
 
 See [this `Netlify.toml`](demo/netlify.toml) for an example.
