@@ -11,5 +11,5 @@ functions = "functions"
 
 [[redirects]]
 from = "/"
-to = "https://github.com/mraerino/hugo-preview-server"
+to = "https://github.com/mraerino/hugo-preview-server#readme"
 force = true
