@@ -2,7 +2,8 @@
 publish = "public"
 command = '''
 hugo -b /demo/ -d public/demo && \
-curl -L -s https://github.com/mraerino/hugo-preview-server/releases/download/v0.1.1.pre1/preview-lambda -o functions/preview
+curl -L -s https://github.com/mraerino/hugo-preview-server/releases/download/v0.1.1.pre1/preview-lambda -o functions/preview && \
+chmod +x functions/preview
 '''
 functions = "functions"
 
