@@ -1,5 +1,5 @@
 title: Stackbit Exto Theme
-baseURL: /
+baseURL: /demo/
 params:
   color_scheme: light
   accent_color: pink
