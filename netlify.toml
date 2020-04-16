@@ -1,2 +1,3 @@
 [build]
 base = "demo"
+ignore = "sh -c 'exit 1'"
