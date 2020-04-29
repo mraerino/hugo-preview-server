@@ -6,9 +6,11 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"sync/atomic"
+	"time"
 )
 
-const rootTreeQuery = `
+const initialRootTreeQuery = `
 {
 	repository(owner: "%s", name: "%s") {
 		defaultBranchRef {
@@ -25,6 +27,22 @@ const rootTreeQuery = `
 								oid
 							}
 						}
+						oid
+					}
+				}
+			}
+		}
+	}
+}
+`
+
+const updateRootTreeQuery = `
+{
+	repository(owner: "%s", name: "%s") {
+		defaultBranchRef {
+			target {
+				... on Commit {
+					tree {
 						oid
 					}
 				}
@@ -61,10 +79,10 @@ type rootTreeResult struct {
 	} `json:"data"`
 }
 
-func (fs *githubFS) loadRepoRootTree() error {
+func (fs *githubFS) queryGraphQL(query string, res interface{}) error {
 	bodyR, bodyW := io.Pipe()
 	graphql := &graphqlReq{
-		Query: fmt.Sprintf(rootTreeQuery, fs.repoOwner, fs.repoName),
+		Query: query,
 	}
 	go func() {
 		json.NewEncoder(bodyW).Encode(graphql)
@@ -76,12 +94,23 @@ func (fs *githubFS) loadRepoRootTree() error {
 		return err
 	}
 
-	res := rootTreeResult{}
 	if _, err := fs.client.Do(context.Background(), req, &res); err != nil {
 		return err
 	}
 
-	fs.rootTree = res.Data.Repository.DefaultBranchRef.Target.Tree.SHA
+	return nil
+}
+
+func (fs *githubFS) loadRepoRootTree() error {
+	query := fmt.Sprintf(initialRootTreeQuery, fs.repoOwner, fs.repoName)
+	res := rootTreeResult{}
+	if err := fs.queryGraphQL(query, &res); err != nil {
+		return err
+	}
+
+	fs.rootTreeMu.Lock()
+	fs.rootTree.Store(res.Data.Repository.DefaultBranchRef.Target.Tree.SHA)
+	fs.rootTreeMu.Unlock()
 
 	entries := res.Data.Repository.DefaultBranchRef.Target.Tree.Entries
 	treeFiles := make(map[string]githubFile, len(entries))
@@ -95,6 +124,33 @@ func (fs *githubFS) loadRepoRootTree() error {
 		}
 	}
 	fs.treeCache.Store(fs.rootTree, treeFiles)
+
+	atomic.StoreInt64(fs.lastCheck, time.Now().UnixNano())
+	return nil
+}
+
+func (fs *githubFS) updateRepoRootTree() error {
+	lastCheck := atomic.LoadInt64(fs.lastCheck)
+	expired := time.Now().Add(time.Minute * -1).UnixNano()
+	if lastCheck > expired {
+		return nil
+	}
+
+	// store
+	old := atomic.SwapInt64(fs.lastCheck, time.Now().UnixNano())
+	if old > expired {
+		return nil
+	}
+
+	query := fmt.Sprintf(updateRootTreeQuery, fs.repoOwner, fs.repoName)
+	res := rootTreeResult{}
+	if err := fs.queryGraphQL(query, &res); err != nil {
+		return err
+	}
+
+	fs.rootTreeMu.Lock()
+	fs.rootTree.Store(res.Data.Repository.DefaultBranchRef.Target.Tree.SHA)
+	fs.rootTreeMu.Unlock()
 
 	return nil
 }
